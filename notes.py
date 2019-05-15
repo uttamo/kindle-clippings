@@ -3,13 +3,10 @@ from typing import Tuple
 import re
 import datetime as dt
 
-from pdb import set_trace as bp
-from pprint import pprint
-
 MODULE_PATH = os.path.dirname(os.path.realpath(__file__))
 
 
-def parse_file(path: str):
+def parse_file(path: str) -> dict:
     full_path = os.path.join(MODULE_PATH, path)
 
     with open(full_path, 'r', encoding='utf-8-sig') as inp:
@@ -19,7 +16,7 @@ def parse_file(path: str):
     notes = {}
 
     sections = content.split('==========')
-    for enn, section in enumerate(sections):
+    for section in sections:
         # Non-empty lines
         # line 1 - book title (author)
         # line 2 - highlight info
@@ -31,7 +28,6 @@ def parse_file(path: str):
         elif 'Your Bookmark' in section or 'Your Note' in section:
             continue
         else:
-            bp()
             raise NotImplementedError(f'Unsupported note type: {section}')
 
         lines = [line for line in section.split('\n') if line]
@@ -41,11 +37,11 @@ def parse_file(path: str):
 
         # Title and author
         title_and_author_str = lines[0]  # regex: (?<=.)\(.+\)
-        book_title, author_name = _parse_title_and_author_name(title_and_author_str)
+        book_title, author_name = parse_title_and_author_name(title_and_author_str)
 
         # Highlight info
         highlight_info_str = lines[1]
-        location, time_added = _parse_highlight_info(highlight_info_str)
+        location, time_added = parse_highlight_info(highlight_info_str)
 
         # Highlighted text
         highlighted_text = lines[2]
@@ -54,12 +50,12 @@ def parse_file(path: str):
         if book_title in notes:
             notes[book_title]['notes'].append(note_dict)
         else:
-            notes[book_title] = {'author': author_name, 'notes': []}
+            notes[book_title] = {'author': author_name, 'notes': [note_dict]}
 
     return notes
 
 
-def _parse_title_and_author_name(first_line: str) -> Tuple[str, str]:
+def parse_title_and_author_name(first_line: str) -> Tuple[str, str]:
     _author_bracket_index = first_line.rfind('(')  # find rightmost '(' in case book title contains '('
     author_name = first_line[_author_bracket_index:][1:-1].strip()
 
@@ -69,7 +65,7 @@ def _parse_title_and_author_name(first_line: str) -> Tuple[str, str]:
     return book_title, author_name
 
 
-def _parse_highlight_info(second_line: str) -> Tuple[str, dt.datetime]:
+def parse_highlight_info(second_line: str) -> Tuple[str, dt.datetime]:
     location_str = re.findall('(?<=.location ).+(?= \|)', second_line)[0]
     _time_added_str = re.findall('(?<=.Added on ).+', second_line)[0]
     time_added = dt.datetime.strptime(_time_added_str, '%A, %d %B %Y %H:%M:%S')
@@ -77,5 +73,5 @@ def _parse_highlight_info(second_line: str) -> Tuple[str, dt.datetime]:
     return location_str, time_added
 
 
-def _parse_highlighted_text(third_line: str) -> str:
+def parse_highlighted_text(third_line: str) -> str:
     return third_line.rstrip(',')
