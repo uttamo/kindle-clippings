@@ -3,17 +3,18 @@ from typing import Tuple
 import re
 import datetime as dt
 
-MODULE_PATH = os.path.dirname(os.path.realpath(__file__))
+MODULE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
 def parse_file(path: str) -> dict:
-    full_path = os.path.join(MODULE_PATH, path)
+    full_path = os.path.join(MODULE_DIR, path)
 
-    with open(full_path, 'r', encoding='utf-8-sig') as inp:
-        content = inp.read()
+    with open(full_path, 'r', encoding='utf-8-sig') as clippings_file:
+        content = clippings_file.read()
 
-    bad_sections = []
-    notes = {}
+    _unsuitable_sections = []
+    notes_data = {}
+    _highlights = {}
 
     sections = content.split('==========')
     for section in sections:
@@ -32,27 +33,37 @@ def parse_file(path: str) -> dict:
 
         lines = [line for line in section.split('\n') if line]
         if len(lines) != 3:
-            bad_sections.append(lines)
+            _unsuitable_sections.append(lines)
             continue
 
         # Title and author
-        title_and_author_str = lines[0]  # regex: (?<=.)\(.+\)
+        title_and_author_str = lines[0]
         book_title, author_name = parse_title_and_author_name(title_and_author_str)
 
-        # Highlight info
+        # Highlight info - location and time added
         highlight_info_str = lines[1]
         location, time_added = parse_highlight_info(highlight_info_str)
 
         # Highlighted text
         highlighted_text = lines[2]
+        # Sometimes the clippings file has duplicated notes, so we need to check if a particular note has already been
+        # encountered
+        existing_highlights_for_author = _highlights.get(book_title, [])
+        if highlighted_text in existing_highlights_for_author:
+            continue
+        else:
+            if book_title in _highlights:
+                _highlights[book_title].append(highlighted_text)
+            else:
+                _highlights[book_title] = [highlighted_text]
         note_dict = {'location': location, 'time_added': time_added, 'highlighted_text': highlighted_text}
 
-        if book_title in notes:
-            notes[book_title]['notes'].append(note_dict)
+        if book_title in notes_data:
+            notes_data[book_title]['notes'].append(note_dict)
         else:
-            notes[book_title] = {'author': author_name, 'notes': [note_dict]}
+            notes_data[book_title] = {'author': author_name, 'notes': [note_dict]}
 
-    return notes
+    return notes_data
 
 
 def parse_title_and_author_name(first_line: str) -> Tuple[str, str]:
