@@ -2,10 +2,10 @@ from unittest import TestCase
 import datetime as dt
 import os.path
 
-from notes_parse import parse_file, parse_title_and_author_name, parse_highlight_info, parse_highlighted_text
+from notes_parser import parse_file, parse_title_and_author_name, parse_highlight_info, parse_highlighted_text
 
 
-class TestNotes(TestCase):
+class TestNotesParser(TestCase):
     def test_parse_title_and_author_name(self):
         s1 = 'The Billion Dollar Spy: A True Story of Cold War Espionage and Betrayal (David E. Hoffman)'
         assert parse_title_and_author_name(s1) == \
@@ -67,9 +67,7 @@ class TestNotes(TestCase):
 
     def test_parse_duplicated_notes(self):
         filename = os.path.join('tests', 'testdata', 'duplicate_test.txt')
-        bn = 'Black Edge: Inside Information, Dirty Money, and the Quest to Bring Down the Most Wanted Man on Wall Street'
         parsed_file = parse_file(filename)
-        # bp()
         assert parsed_file == {'Black Edge: Inside Information, Dirty Money, and the Quest to Bring Down the '
                                'Most Wanted Man on Wall Street':
                                    {'author': 'Sheelah Kolhatkar',
