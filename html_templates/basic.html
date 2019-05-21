@@ -10,11 +10,19 @@
 <body>
 <section class="section">
     <div class="container">
+        <p class="title is-2">Highlights from '{{ input_filename }}'</p>
+        <aside class="menu">
+            <ul class="menu-list">
+                {% for book in data %}
+                    <li><a href="#book{{ loop.index }}">{{ loop.index }}. {{ book['book_title'] }} <span style="font-style: italic">(by {{ book['author'] }})</span></a></li>
+                {% endfor %}
+            </ul>
+        </aside>
         <div class="content">
             {% for book in data %}
                 <br>
                 <hr>
-                <p class="title is-3">{{ book['book_title'] }}</p>
+                <p class="title is-3" id="book{{ loop.index }}"><a href="#top">{{ loop.index }}. {{ book['book_title'] }}</a></p>
                 <p class="subtitle is-5">by {{ book['author'] }}</p>
                 <ul>
                     {% for highlight in book['notes'] %}

@@ -48,7 +48,7 @@ def output_html(clippings_file: str, output_filename: str) -> str:
     env = Environment(loader=PackageLoader('kindle_notes', 'html_templates'))
     template = env.get_template('basic.html')
 
-    rendered = template.render(data=variables)
+    rendered = template.render(data=variables, input_filename=os.path.basename(clippings_file))
 
     with open(output_filename, 'w') as output:
         output.write(rendered)
