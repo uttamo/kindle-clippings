@@ -12,7 +12,7 @@ def output_plaintext(clippings_file: str, output_filename: str) -> str:
     parsed_data = parse_file(clippings_file)
     output_filename = os.path.join(OUTPUT_DIR, output_filename)
 
-    output_text = f'Parsed Kindle clippings file: {clippings_file}\n'
+    output_text = "Highlights from '{}'\n".format(os.path.basename(clippings_file))
 
     for book_title in parsed_data:
         book_notes_data = parsed_data[book_title]['notes']

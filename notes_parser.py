@@ -77,7 +77,7 @@ def parse_title_and_author_name(first_line: str) -> Tuple[str, str]:
 
 
 def parse_highlight_info(second_line: str) -> Tuple[str, dt.datetime]:
-    location_str = re.findall('(?<=.location ).+(?= \|)', second_line)[0]
+    location_str = re.findall(r'(?<=.location ).+(?= \|)', second_line)[0]
     _time_added_str = re.findall('(?<=.Added on ).+', second_line)[0]
     time_added = dt.datetime.strptime(_time_added_str, '%A, %d %B %Y %H:%M:%S')
 
