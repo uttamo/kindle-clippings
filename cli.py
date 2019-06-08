@@ -8,7 +8,7 @@ from output import output_html, output_plaintext
 parser = argparse.ArgumentParser(description="For parsing Amazon Kindle's 'My Clippings' files")
 
 parser.add_argument('input', default='My Clippings.txt', help='Input filename')
-parser.add_argument('output', default='output', help='Output filename without extension')
+parser.add_argument('output', default='output', help='Output filename')
 parser.add_argument('-w', action='store_true', dest='html_output', help='Output HTML')
 parser.add_argument('-t', action='store_true', dest='plaintext_output', help='Output plaintext')
 
