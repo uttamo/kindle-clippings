@@ -1,7 +1,7 @@
 import os.path
 import datetime as dt
 
-from jinja2 import Environment, PackageLoader
+from jinja2 import Environment, FileSystemLoader
 
 from notes_parser import MODULE_DIR, parse_file
 
@@ -10,7 +10,6 @@ OUTPUT_DIR = os.path.join(MODULE_DIR, 'output')
 
 def output_plaintext(clippings_file: str, output_filename: str) -> str:
     parsed_data = parse_file(clippings_file)
-    output_filename = os.path.join(OUTPUT_DIR, output_filename)
 
     output_text = "Highlights from '{}'\n".format(os.path.basename(clippings_file))
 
@@ -29,7 +28,6 @@ def output_plaintext(clippings_file: str, output_filename: str) -> str:
 
 def output_html(clippings_file: str, output_filename: str) -> str:
     parsed_data = parse_file(clippings_file)
-    output_filename = os.path.join(OUTPUT_DIR, output_filename)
 
     variables = []
     for book, data in parsed_data.items():
@@ -45,7 +43,7 @@ def output_html(clippings_file: str, output_filename: str) -> str:
 
         variables.append(data)
 
-    env = Environment(loader=PackageLoader('kindle_notes', 'html_templates'))
+    env = Environment(loader=FileSystemLoader(os.path.join(os.path.dirname(__file__), 'html_templates')))
     template = env.get_template('basic.html')
 
     rendered = template.render(data=variables, input_filename=os.path.basename(clippings_file))
