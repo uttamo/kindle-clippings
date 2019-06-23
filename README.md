@@ -23,4 +23,4 @@ Default output is plaintext
 
 Generating HTML instead
 
-`python cli.py 'My Clippings.txt' 'output.html'-w`
+`python cli.py 'My Clippings.txt' 'output.html' -w`
