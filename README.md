@@ -1,6 +1,6 @@
 # Kindle Clippings
 
-Parse My Clippings.txt file that is stored on your Kindle which contains highlights you've made across all of the books you've read.
+Parse the **My Clippings.txt** file that is stored on your Amazon Kindle which contains highlights you've made across all of the books you've read.
 
 ## Usage
 
