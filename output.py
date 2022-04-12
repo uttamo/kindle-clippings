@@ -1,17 +1,20 @@
 import os.path
 import datetime as dt
+import re
 from jinja2 import Environment, FileSystemLoader
 from notes_parser import MODULE_DIR, parse_file
 
 OUTPUT_DIR = os.path.join(MODULE_DIR, 'output')
 
-def output_orgmode(clippings_file: str, output_filename: str) -> str:
-    parsed_data = parse_file(clippings_file)
+def output_orgmode(clippings_file: str, output_filename: str, title = '.*') -> str:
+    title_reg = re.compile(title)
+    parsed_data = parse_file(clippings_file, title_reg)
 
     # I think this is unnecessary in org mode
     # output_text = "* Highlights from '{}'\n".format(os.path.basename(clippings_file))
     output_text = ""
 
+    # No need to change that part for a single book
     for book_title in parsed_data:
         if len(parsed_data[book_title]['notes']) > 0:
             output_text += '\n\n* {}\nby {}\n'.format(book_title, parsed_data[book_title]['author'])

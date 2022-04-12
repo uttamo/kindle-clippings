@@ -124,3 +124,6 @@ dmypy.json
 
 # IntelliJ files
 .idea
+
+# Temporary Output files
+temp*

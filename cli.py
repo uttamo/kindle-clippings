@@ -11,8 +11,7 @@ parser.add_argument('input', default='My Clippings.txt', help='Input filename')
 parser.add_argument('output', default='output', help='Output filename')
 
 # Single book
-# TODO
-# parser.add_argument("-t","--title", help="The title of the book you're interested in( or part of it )", type=str)
+parser.add_argument("-t","--title", default = '.*', help="The title of the book you're interested in( or part of it )", type=str)
 
 # Output options
 # (For consistency, changed the output templates to have only Caps)
@@ -32,7 +31,7 @@ if __name__ == '__main__':
         output_html(input_filename, f'{output_filename}')
     elif args.org_out:
         logging.warning('Will use orgmode output.')
-        output_orgmode(input_filename, f'{output_filename}')
+        output_orgmode(input_filename, f'{output_filename}', args.title)
     else:
         logging.warning('Will use plaintext output.\nIf this is not what you wanted run with -h or --help')
         output_plaintext(input_filename, f'{output_filename}')

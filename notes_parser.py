@@ -7,7 +7,7 @@ import re
 MODULE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-def parse_file(path: str) -> dict:
+def parse_file(path: str, title_reg=re.compile('.*')) -> dict:
     "Given a clippings.txt file return a dictionary in the following form\
     dict[bookTitle][notes/highlights/bookmarks][], where \
     1. bookTitle, simple string\
@@ -47,6 +47,10 @@ def parse_file(path: str) -> dict:
         # line 3 - highlighted text
         # Title and author
         book_title, author_name = parse_title_and_author_name(lines[0])
+        # title check
+        if not title_reg.search(book_title):
+            continue
+
         location, time_added = parse_highlight_info(lines[1])
         highlighted_text = lines[2]
 
