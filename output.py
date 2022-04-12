@@ -6,13 +6,13 @@ from notes_parser import MODULE_DIR, parse_file
 
 OUTPUT_DIR = os.path.join(MODULE_DIR, 'output')
 
-def output_orgmode(clippings_file: str, output_filename: str, title = '.*') -> str:
+def output_orgmode(clippings_file: str, output_filename: str, title, starting_time, ending_time) -> str:
     title_reg = re.compile(title)
-    parsed_data = parse_file(clippings_file, title_reg)
+    parsed_data = parse_file(clippings_file, title_reg, starting_time, ending_time)
 
     # I think this is unnecessary in org mode
     # output_text = "* Highlights from '{}'\n".format(os.path.basename(clippings_file))
-    output_text = ""
+    output_text = "Kindle-clippings called from {} to {}".format(starting_time,ending_time)
 
     # No need to change that part for a single book
     for book_title in parsed_data:

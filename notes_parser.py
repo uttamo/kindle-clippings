@@ -3,16 +3,13 @@ from pathlib import Path
 from typing import Tuple
 import datetime as dt
 import re
+
 # TODO why not Path.cwd()?
 MODULE_DIR = os.path.dirname(os.path.realpath(__file__))
 
 
-def parse_file(path: str, title_reg=re.compile('.*')) -> dict:
-    "Given a clippings.txt file return a dictionary in the following form\
-    dict[bookTitle][notes/highlights/bookmarks][], where \
-    1. bookTitle, simple string\
-    2. notes/highlights/bookmarks, simple string, type of note\
-    3. ctype_dict: location, time_added, highlighted_text"
+def parse_file(path: str, title_reg=re.compile('.*'), starting_time = '1986-09-29', ending_time = dt.datetime.now().isoformat()) -> dict:
+    "Given a clippings.txt file return its contents in the /proper/ form"
     # TODO perform path check
     full_path = os.path.join(MODULE_DIR, path)
 
@@ -23,6 +20,10 @@ def parse_file(path: str, title_reg=re.compile('.*')) -> dict:
     notes_data = {}
     _highlights = {}
 
+    # TODO fix vars' names (deStart, deEnd)
+    deStart = dt.datetime.fromisoformat(starting_time)
+    deEnd = dt.datetime.fromisoformat(ending_time)
+
     sections = content.split('==========')
     for section in sections:
         if not section or section == '\n':
@@ -31,7 +32,6 @@ def parse_file(path: str, title_reg=re.compile('.*')) -> dict:
         # TODO Notes should be linked with highlights most of the time, for now, just differentiating
             pass
         elif 'Your Bookmark' in section:
-            ctype =  'bookmark'
             continue
         else:
             raise NotImplementedError(f'Unsupported note type: {section}')
@@ -52,15 +52,19 @@ def parse_file(path: str, title_reg=re.compile('.*')) -> dict:
             continue
 
         location, time_added = parse_highlight_info(lines[1])
-        highlighted_text = lines[2]
-
-        # Sometimes the clippings file has duplicated notes, so we need to check if a particular note has already been
-        # encountered
-        existing_highlights_for_author = _highlights.get(book_title, [])
+        # time check
+        if time_added < deStart or time_added > deEnd:
+           continue
 
         # TODO, fix the naming standards here, highlights and notes are not the same
         # TODO, fix the dictionary structure here, I think it can be improved ( to allow for quicklier searching and grouping )
         #       - instead of title first, author first maybe?
+        # Sometimes the clippings file has duplicated notes, so we need to check if a particular note has already been
+        # encountered
+        highlighted_text = lines[2]
+        existing_highlights_for_author = _highlights.get(book_title, [])
+
+        # FIXME I must have broken this functionality
         if highlighted_text in existing_highlights_for_author:
             continue
         else:
