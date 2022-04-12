@@ -1,8 +1,6 @@
 import os.path
 import datetime as dt
-
 from jinja2 import Environment, FileSystemLoader
-
 from notes_parser import MODULE_DIR, parse_file
 
 OUTPUT_DIR = os.path.join(MODULE_DIR, 'output')
@@ -10,15 +8,19 @@ OUTPUT_DIR = os.path.join(MODULE_DIR, 'output')
 def output_orgmode(clippings_file: str, output_filename: str) -> str:
     parsed_data = parse_file(clippings_file)
 
-    output_text = "* Highlights from '{}'\n".format(os.path.basename(clippings_file))
+    # I think this is unnecessary in org mode
+    # output_text = "* Highlights from '{}'\n".format(os.path.basename(clippings_file))
+    output_text = ""
 
     for book_title in parsed_data:
-        book_notes_data = parsed_data[book_title]['notes']
-        if len(book_notes_data) > 0:
-            output_text += '\n\n** {}\nby {}\n'.format(book_title, parsed_data[book_title]['author'])
-            for highlight in book_notes_data:
-                output_text += '\n*** {}'.format(create_note_str(highlight, include_location=False))
+        if len(parsed_data[book_title]['notes']) > 0:
+            output_text += '\n\n* {}\nby {}\n'.format(book_title, parsed_data[book_title]['author'])
+            for highlight in parsed_data[book_title]['notes']:
+                output_text += '\n** {}\n{}\nLOC: {}'.format(highlight['highlighted_text'],
+                                                                  time_to_org(highlight['time_added']),
+                                                                  highlight['location'])
 
+    # TODO Log when overwriting an existing file
     with open(output_filename, 'w') as out:
         out.write(output_text)
 
@@ -106,3 +108,7 @@ def date_suffix(day: int) -> str:
         return 'th'
     else:
         return ['st', 'nd', 'rd'][day % 10 - 1]
+
+def time_to_org(date: dt.datetime) -> str:
+    "Simple conversion to org mode (active) timestamp"
+    return date.strftime('<%Y-%m-%d %a>')
