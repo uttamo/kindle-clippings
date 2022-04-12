@@ -7,6 +7,22 @@ from notes_parser import MODULE_DIR, parse_file
 
 OUTPUT_DIR = os.path.join(MODULE_DIR, 'output')
 
+def output_orgmode(clippings_file: str, output_filename: str) -> str:
+    parsed_data = parse_file(clippings_file)
+
+    output_text = "* Highlights from '{}'\n".format(os.path.basename(clippings_file))
+
+    for book_title in parsed_data:
+        book_notes_data = parsed_data[book_title]['notes']
+        if len(book_notes_data) > 0:
+            output_text += '\n\n** {}\nby {}\n'.format(book_title, parsed_data[book_title]['author'])
+            for highlight in book_notes_data:
+                output_text += '\n*** {}'.format(create_note_str(highlight, include_location=False))
+
+    with open(output_filename, 'w') as out:
+        out.write(output_text)
+
+    return output_text
 
 def output_plaintext(clippings_file: str, output_filename: str) -> str:
     parsed_data = parse_file(clippings_file)
