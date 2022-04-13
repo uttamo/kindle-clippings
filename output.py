@@ -6,7 +6,7 @@ from notes_parser import MODULE_DIR, parse_file
 
 OUTPUT_DIR = os.path.join(MODULE_DIR, 'output')
 
-def output_orgmode(clippings_file: str, output_filename: str, title, starting_time, ending_time) -> str:
+def output_orgmode(clippings_file: str, output_filename: str, title, starting_time, ending_time, append = False) -> str:
     title_reg = re.compile(title)
     parsed_data = parse_file(clippings_file, title_reg, starting_time, ending_time)
 
@@ -24,8 +24,12 @@ def output_orgmode(clippings_file: str, output_filename: str, title, starting_ti
                                                                   highlight['location'])
 
     # TODO Log when overwriting an existing file
-    with open(output_filename, 'w') as out:
-        out.write(output_text)
+    if append:
+        with open(output_filename, 'a') as out:
+            out.write(output_text)
+    else:
+        with open(output_filename, 'w') as out:
+            out.write(output_text)
 
     return output_text
 

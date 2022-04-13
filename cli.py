@@ -16,7 +16,7 @@ parser.add_argument('output', default='output', help='Output filename')
 parser.add_argument("-t","--title", default = '.*',
                     help="The title of the book you're interested in( or part of it )", type=str)
 
-# TODO Time options
+# Time options
 parser.add_argument("-sT","--starting-time", default = '1986-09-29',
                     help="The starting date for your (new) notes.\
                     Notes with older timestamps will be omitted.\
@@ -27,6 +27,10 @@ parser.add_argument("-eT","--ending-time", default = datetime.datetime.now().iso
                     Notes with newer timestamps will be ommited.\
                     Defaults to the present.\
                     To be given in isoformat", type=str)
+
+# Sync
+parser.add_argument("-s","--sync", action = "store_true", default = False,
+                    help="Append to the output file the notes taken from the last export")
 
 # Output options
 # (For consistency, changed the output templates to have only Caps)
@@ -46,7 +50,7 @@ if __name__ == '__main__':
         output_html(input_filename, f'{output_filename}')
     elif args.org_out:
         logging.warning('Will use orgmode output.')
-        output_orgmode(input_filename, f'{output_filename}', args.title, args.starting_time, args.ending_time)
+        output_orgmode(input_filename, f'{output_filename}', args.title, args.starting_time, args.ending_time, args.sync)
     else:
         logging.warning('Will use plaintext output.\nIf this is not what you wanted run with -h or --help')
         output_plaintext(input_filename, f'{output_filename}')

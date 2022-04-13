@@ -45,7 +45,9 @@ These last examples do not work with the provided input, they just show how the 
 
 By starting time:
 `python cli.py 'My Clippings.txt' -O 'output.org' -sT '2021-04-14'`
+
 By /ending/ time:
 `python cli.py 'My Clippings.txt' -O 'output.org' -eT '2022-04-14'`
+
 Using both start and end time:
 `python cli.py 'My Clippings.txt' -O 'output.org' -sT '2021-04-14' -eT '2022-04-14'`
